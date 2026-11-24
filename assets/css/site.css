@@ -1,0 +1,1439 @@
+/*
+  Shared stylesheet for the five-page candidate.
+  Design system record: docs/DESIGN_DECISIONS.md
+  Tokens first, then base elements, section rhythm, section layouts, components, form, shell.
+
+  Border policy (refinement round 1): borders are full-width rules above content, full outlines on
+  unfinished or state boxes, or the Process timeline spine. No one-side accent stripes on blocks.
+*/
+
+:root {
+  /* Type: two families only, both local system stacks (no remote fonts) */
+  --font-head: charter, "Bitstream Charter", "Sitka Text", cambria, georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+  --step-small: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.3125rem;
+  --step-2: 1.625rem;
+  --step-3: clamp(1.875rem, 1.5rem + 1.2vw, 2.375rem);
+  --step-4: clamp(2.25rem, 1.7rem + 2.2vw, 3.25rem);
+  --leading-tight: 1.12;
+  --leading-snug: 1.35;
+  --leading-body: 1.6;
+
+  /* Color: cool field-paper base, dark ink, one rust accent, one evergreen field color */
+  --color-paper: #f4f5f1;
+  --color-ink: #1c211e;
+  --color-ink-muted: #474f4a;
+  --color-rule: #1c211e;
+  --color-rule-soft: #bfc6be;
+  --color-accent: #b03c17;
+  --color-accent-strong: #8a2d0f;
+  --color-on-accent: #fff;
+  --color-field: #24352b;
+  --color-on-field: #f4f5f1;
+  --color-slot: #d6dbd3;
+  --color-marker: #ffe14a;
+  --color-on-marker: #1c211e;
+  --color-error: #a1231b;
+  --color-error-surface: #fbeeec;
+  --color-success: #1f5d3a;
+  --color-success-surface: #e9f2ec;
+  --color-focus: #1c211e;
+  --color-focus-on-dark: #ffe14a;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* Section rhythm: three distances, chosen by the relationship between neighbouring sections */
+  --space-section: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  --space-section-lg: clamp(4.5rem, 3rem + 6vw, 8.5rem);
+  --space-opener: clamp(2.5rem, 2rem + 2vw, 4rem);
+
+  /* Widths */
+  --width-page: 72rem;
+  --measure: 68ch;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+
+  /* Shape */
+  --radius: 2px;
+  --border-thin: 1px solid var(--color-rule);
+  --border-soft: 1px solid var(--color-rule-soft);
+  --border-heavy: 3px solid var(--color-rule);
+
+  /* Back to top link: fixed height so the space it rests in can be reserved */
+  --to-top-height: 44px;
+
+  /* Motion: state feedback only */
+  --duration-fast: 120ms;
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  text-size-adjust: 100%;
+
+  /* Keyboard focus scrolled into view from below clears the floating Back to top link. */
+  scroll-padding-bottom: calc(var(--to-top-height) + 2 * var(--space-4));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: var(--leading-body);
+  overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-head);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--step-4);
+  max-width: 18ch;
+  margin-bottom: var(--space-5);
+}
+
+h2 {
+  font-size: var(--step-3);
+  max-width: 24ch;
+}
+
+h3 {
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+p,
+ul,
+ol,
+dl {
+  margin: 0 0 var(--space-4);
+}
+
+p:last-child,
+ul:last-child,
+ol:last-child,
+dl:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--color-accent-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+/* Low specificity on purpose: any component that sets its own link color keeps it on hover. */
+:where(a):hover {
+  color: var(--color-ink);
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.privacy-notice {
+  max-width: 36rem;
+  margin-top: var(--space-7);
+  padding-top: var(--space-4);
+  border-top: var(--border-thin);
+}
+
+.privacy-notice h3 {
+  font-size: var(--step-1);
+}
+
+.consent-line {
+  font-size: var(--step-small);
+}
+
+/* ---------- Price notes: a short condition set under a price, in body text ---------- */
+
+.price-note {
+  display: block;
+  max-width: 48ch;
+  font-size: var(--step-small);
+  line-height: var(--leading-snug);
+}
+
+.next-step .price-note {
+  margin-top: var(--space-2);
+}
+
+/* ---------- Photographs: fixed ratio so the frame is reserved before the image loads ---------- */
+
+/* Real photographs: shown as supplied, with no overlay, filter, or hover effect.
+   The intrinsic width/height on the <img> reserves the space; aspect-ratio keeps the crop fixed. */
+.photo {
+  margin: 0;
+}
+
+.photo img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--color-slot);
+}
+
+.photo--portrait img {
+  aspect-ratio: 4 / 5;
+}
+
+@media (width >= 48rem) {
+  .intro-grid .photo--portrait {
+    justify-self: end;
+    width: 100%;
+    max-width: 27rem;
+  }
+}
+
+/* ---------- Buttons and links ---------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-5);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) linear, border-color var(--duration-fast) linear;
+}
+
+.button:hover {
+  background: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
+  color: var(--color-on-accent);
+}
+
+.button:disabled {
+  background: var(--color-slot);
+  border-color: var(--color-ink-muted);
+  color: var(--color-ink);
+  cursor: not-allowed;
+}
+
+.text-link {
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-6);
+  margin-top: var(--space-6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Section rhythm ----------
+   There is no automatic rule between sections. Each section states its relationship to the one before:
+   .section--opener   first section, sits close under the header
+   .section--major    backbone content (specialty, handoff, timeline, prices): the most space
+   .section--ruled    a new topic: a content-width thin rule, aligned with the text
+   .section--heavy    a new topic that carries prices or the page's commitments: a heavy rule
+   .section--follow   continues the previous topic: no rule, half the usual space, smaller heading
+   .section--field    the one evergreen field on the site (Home specialty)
+   .section (plain)   a new topic whose own content brings rules (Home services ledger): spacing only, no section rule
+*/
+
+/* Only the incoming section sets the gap above it (top padding), so distances never stack. */
+.section {
+  padding-top: var(--space-section);
+}
+
+main > .section:last-of-type {
+  padding-bottom: var(--space-section-lg);
+}
+
+.section--opener {
+  padding-top: var(--space-opener);
+}
+
+/* A colored field has no top padding of its own to lean on, so the opener keeps a bottom margin of paper. */
+.section--opener:has(+ .section--field) {
+  padding-bottom: var(--space-section);
+}
+
+.section--major {
+  padding-top: var(--space-section-lg);
+}
+
+.section--ruled,
+.section--heavy {
+  padding-top: var(--space-opener);
+}
+
+.section--ruled > .wrap::before,
+.section--heavy > .wrap::before {
+  content: "";
+  display: block;
+  margin-bottom: var(--space-7);
+  border-top: var(--border-thin);
+}
+
+.section--heavy > .wrap::before {
+  border-top: var(--border-heavy);
+}
+
+.section--follow {
+  padding-top: var(--space-7);
+}
+
+.section--follow h2 {
+  font-size: var(--step-2);
+}
+
+.lead {
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+  max-width: 46ch;
+}
+
+.measure {
+  max-width: var(--measure);
+}
+
+.muted {
+  color: var(--color-ink-muted);
+}
+
+.section-intro {
+  max-width: var(--measure);
+  margin-bottom: var(--space-6);
+}
+
+/* intro: page opener, text and photo balanced on their centres */
+.intro-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (width >= 48rem) {
+  .intro-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-7);
+    align-items: center;
+  }
+}
+
+/* intro-index (Process) and intro-contact (Contact): text opener beside a working list */
+.opener-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (width >= 48rem) {
+  .opener-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+.opener-aside h2 {
+  font-size: var(--step-1);
+  margin-bottom: var(--space-3);
+}
+
+.stage-index {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: stage-index;
+  border-top: var(--border-heavy);
+}
+
+.stage-index li {
+  counter-increment: stage-index;
+  border-bottom: var(--border-soft);
+}
+
+.stage-index a {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  min-height: 44px;
+  padding-block: var(--space-3);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: var(--step-1);
+}
+
+.stage-index a::before {
+  content: counter(stage-index);
+  min-width: 1.5rem;
+  color: var(--color-accent-strong);
+}
+
+/* specialty: the evergreen field on Home. Heading left, statement right */
+.specialty-grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (width >= 48rem) {
+  .specialty-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+.specialty-grid h2 {
+  margin: 0;
+}
+
+.specialty-grid .specialty-statement {
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+.specialty-grid p {
+  max-width: 52ch;
+}
+
+/* handoff: the Home outline of the five stages, with who is working at each stage */
+.handoff-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-6);
+  counter-reset: step;
+  border-top: var(--border-heavy);
+}
+
+.handoff-list li {
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-1) var(--space-4);
+  padding-block: var(--space-5);
+  border-bottom: var(--border-soft);
+}
+
+.handoff-list li::before {
+  content: counter(step);
+  grid-row: span 3;
+  font-family: var(--font-head);
+  font-size: var(--step-2);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-accent-strong);
+}
+
+@media (width >= 48rem) {
+  .handoff-list li {
+    grid-template-columns: 3rem 10rem minmax(0, 1fr);
+    gap: var(--space-2) var(--space-5);
+    align-items: baseline;
+  }
+
+  .handoff-list li::before {
+    grid-row: span 2;
+  }
+
+  .handoff-list .step-name {
+    grid-row: span 2;
+  }
+}
+
+@media (width >= 64rem) {
+  .handoff-list li {
+    grid-template-columns: 3rem 11rem minmax(0, 1fr) 15rem;
+  }
+
+  .handoff-list li::before,
+  .handoff-list .step-name {
+    grid-row: auto;
+  }
+}
+
+.step-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+.step-who {
+  font-size: var(--step-small);
+  font-weight: 700;
+  color: var(--color-ink-muted);
+}
+
+.step-who span {
+  color: var(--color-accent-strong);
+}
+
+/* services: two ledger entries under their own rules. Not boxes */
+.ledger {
+  display: grid;
+  gap: var(--space-7);
+}
+
+@media (width >= 48rem) {
+  .ledger {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}
+
+.ledger-entry {
+  padding-top: var(--space-5);
+  border-top: var(--border-thin);
+}
+
+.ledger-entry h3 {
+  font-size: var(--step-2);
+}
+
+.ledger-entry p {
+  max-width: 44ch;
+}
+
+.service-area {
+  margin-top: var(--space-6);
+  max-width: var(--measure);
+  color: var(--color-ink-muted);
+}
+
+/* issues (Training): the specialty entry spans the list, the others run in two columns */
+.issue-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  column-gap: var(--space-7);
+}
+
+@media (width >= 48rem) {
+  .issue-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.issue-list li {
+  padding-block: var(--space-4);
+  border-top: var(--border-soft);
+}
+
+.issue-list strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+.issue-list .issue--specialty {
+  grid-column: 1 / -1;
+  padding-block: var(--space-5) var(--space-6);
+  border-top: var(--border-heavy);
+}
+
+.issue--specialty strong {
+  font-size: var(--step-3);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-2);
+}
+
+.issue--specialty p {
+  max-width: 60ch;
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+
+.specialty-tag {
+  font-weight: 700;
+  color: var(--color-accent-strong);
+}
+
+/* split: heading column left, content right */
+.split-grid {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (width >= 48rem) {
+  .split-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-7);
+  }
+}
+
+/* program: prose plus a fact list with a heavy rule */
+.program-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (width >= 48rem) {
+  .program-grid {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-8);
+  }
+}
+
+.fact-list {
+  border-top: var(--border-heavy);
+}
+
+.fact-list div {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-block: var(--space-3);
+  border-bottom: var(--border-soft);
+}
+
+.fact-list dt {
+  font-weight: 700;
+}
+
+.fact-list dd {
+  margin: 0;
+}
+
+/* methods: narrow text column */
+.methods-body {
+  max-width: var(--measure);
+}
+
+/* price tables */
+.price-table caption {
+  text-align: left;
+  font-size: var(--step-small);
+  color: var(--color-ink-muted);
+  padding-bottom: var(--space-3);
+}
+
+.price-table th,
+.price-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-4) var(--space-3) var(--space-4) 0;
+  border-bottom: var(--border-soft);
+}
+
+.price-table thead th {
+  font-size: var(--step-small);
+  border-bottom: var(--border-thin);
+  padding-block: var(--space-2);
+}
+
+.price-table tbody th {
+  font-family: var(--font-head);
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+  width: 45%;
+}
+
+.price {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: var(--step-1);
+  margin-right: var(--space-2);
+}
+
+.price-table .price {
+  display: inline-block;
+  margin-bottom: var(--space-1);
+}
+
+.table-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.table-head h2 {
+  margin: 0;
+}
+
+.table-after {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-6);
+}
+
+@media (width >= 48rem) {
+  .table-after {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.table-after p {
+  margin: 0;
+  max-width: 52ch;
+}
+
+/* rates (Boarding): one row per boarding type */
+.rate-list {
+  border-top: var(--border-heavy);
+}
+
+.rate {
+  display: grid;
+  gap: var(--space-2) var(--space-6);
+  padding-block: var(--space-5);
+  border-bottom: var(--border-soft);
+}
+
+@media (width >= 48rem) {
+  .rate {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 5fr);
+    align-items: baseline;
+  }
+}
+
+.rate h3 {
+  font-size: var(--step-2);
+  margin: 0;
+}
+
+.rate p {
+  margin: 0;
+}
+
+.rate-extras .price {
+  font-size: inherit;
+  margin-right: 0;
+}
+
+.rate-note {
+  margin-top: var(--space-6);
+  max-width: var(--measure);
+}
+
+/* notes: policy placeholders as a ruled definition list */
+.policy-list div {
+  display: grid;
+  gap: var(--space-1) var(--space-5);
+  padding-block: var(--space-4);
+  border-top: var(--border-soft);
+}
+
+@media (width >= 48rem) {
+  .policy-list div {
+    grid-template-columns: 16rem minmax(0, 1fr);
+  }
+}
+
+.policy-list dt {
+  font-weight: 700;
+}
+
+.policy-list dd {
+  margin: 0;
+  max-width: var(--measure);
+}
+
+/* extras continue the rate list: same columns, rule below each row, so the
+   last rate row's rule is the only separator between rates and extras */
+.policy-list.rate-extras > div {
+  gap: var(--space-2) var(--space-6);
+  padding-block: var(--space-5);
+  border-top: 0;
+  border-bottom: var(--border-soft);
+}
+
+@media (width >= 48rem) {
+  .policy-list.rate-extras > div {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 5fr);
+    align-items: baseline;
+  }
+
+  .rate-extras dd {
+    grid-column: 2 / -1;
+  }
+}
+
+/* sequence: the Process page. A timeline spine with numbered stages hung from it */
+.sequence {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: stage;
+}
+
+.stage {
+  counter-increment: stage;
+  position: relative;
+  display: grid;
+  gap: var(--space-5);
+  padding: 0 0 var(--space-8) var(--space-8);
+  border-left: var(--border-heavy);
+  margin-left: var(--space-4);
+}
+
+.stage:last-child {
+  padding-bottom: 0;
+}
+
+.stage::before {
+  content: counter(stage);
+  position: absolute;
+  top: -0.2rem;
+  left: -1.4rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  background: var(--color-paper);
+  border: var(--border-heavy);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: var(--step-1);
+}
+
+@media (width < 30rem) {
+  .stage {
+    padding-left: var(--space-6);
+  }
+}
+
+.stage h3 {
+  font-size: var(--step-3);
+  line-height: var(--leading-tight);
+  margin-bottom: var(--space-2);
+}
+
+.stage p {
+  max-width: 60ch;
+}
+
+.stage-hands {
+  margin-bottom: var(--space-4);
+  font-weight: 700;
+  color: var(--color-ink-muted);
+}
+
+.stage-hands span {
+  color: var(--color-accent-strong);
+}
+
+.stage .actions {
+  margin-top: var(--space-5);
+}
+
+/* Contact opener: what to share sits under the invitation */
+.opener-subhead {
+  margin-top: var(--space-7);
+  font-size: var(--step-2);
+}
+
+.check-list {
+  padding-left: 1.25rem;
+}
+
+.check-list li + li {
+  margin-top: var(--space-2);
+}
+
+/* ---------- Inquiry form ---------- */
+
+.form-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (width >= 56rem) {
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: var(--space-7);
+  }
+}
+
+/* The left column carries the form heading and, under a thin rule, what happens after sending. */
+.form-aside .next-step {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: var(--border-thin);
+  max-width: 36rem;
+}
+
+.next-step-heading {
+  font-size: var(--step-1);
+  margin-bottom: var(--space-3);
+}
+
+.form-aside .next-step p + p {
+  margin-top: var(--space-2);
+}
+
+.inquiry-form {
+  max-width: 36rem;
+}
+
+.field {
+  margin-bottom: var(--space-5);
+}
+
+.field label,
+.field legend {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.field fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.hint {
+  display: block;
+  font-size: var(--step-small);
+  color: var(--color-ink-muted);
+  margin-bottom: var(--space-2);
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--color-ink-muted);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-ink-muted);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-ink);
+  font: inherit;
+}
+
+textarea {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  border-color: var(--color-ink);
+}
+
+[aria-invalid="true"] {
+  border-color: var(--color-error);
+  border-width: 3px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+}
+
+.choice input {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.choice label {
+  font-weight: 400;
+  margin: 0;
+}
+
+.field-error {
+  display: block;
+  margin: var(--space-2) 0 0;
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.field-error[hidden] {
+  display: none;
+}
+
+/* Form states: a full outline plus a tinted surface and a text heading. Never color alone, never a side stripe. */
+.form-errors {
+  margin-bottom: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: 3px solid var(--color-error);
+  border-radius: var(--radius);
+  background: var(--color-error-surface);
+}
+
+.form-errors h3 {
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  margin-bottom: var(--space-2);
+}
+
+.form-errors a {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.form-status:not(:empty) {
+  margin-top: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: 3px solid var(--color-success);
+  border-radius: var(--radius);
+  background: var(--color-success-surface);
+  font-weight: 700;
+}
+
+.submit-row {
+  margin-top: var(--space-5);
+}
+
+.submit-note {
+  margin-top: var(--space-3);
+  font-size: var(--step-small);
+}
+
+.js-only {
+  display: none;
+}
+
+.has-js .js-only {
+  display: block;
+}
+
+.has-js .no-js-only {
+  display: none;
+}
+
+/* ---------- 404 ---------- */
+
+.plain-links {
+  padding-left: 1.25rem;
+}
+
+.plain-links li + li {
+  margin-top: var(--space-2);
+}
+
+/* ---------- Shell (placed last so link specificity ascends) ---------- */
+
+.site-footer {
+  margin-top: 0;
+  padding-block: var(--space-7);
+  background: var(--color-ink);
+  color: var(--color-on-field);
+  font-size: 0.9375rem;
+}
+
+.site-footer :focus-visible {
+  outline-color: var(--color-focus-on-dark);
+}
+
+.site-footer a {
+  color: var(--color-on-field);
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (width >= 48rem) {
+  .footer-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+}
+
+.footer-name {
+  font-family: var(--font-head);
+  font-size: var(--step-1);
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.footer-heading {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin-bottom: var(--space-3);
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-list li + li {
+  margin-top: var(--space-2);
+}
+
+.footer-list a {
+  display: inline-block;
+  padding-block: var(--space-1);
+}
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-6);
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-on-field);
+}
+
+.footer-legal > * {
+  margin: 0;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--width-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 10;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 700;
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.skip-link:hover,
+.skip-link:focus,
+.skip-link:focus-visible {
+  color: var(--color-paper);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  clip-path: none;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  outline-color: var(--color-focus-on-dark);
+}
+
+.site-header {
+  border-bottom: var(--border-heavy);
+}
+
+.header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-6);
+  padding-block: var(--space-4);
+}
+
+.wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: var(--step-1);
+  line-height: 1.3;
+  max-width: 28rem;
+}
+
+.wordmark:hover {
+  color: var(--color-ink);
+}
+
+.wordmark-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--step-small);
+  color: var(--color-ink-muted);
+}
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 3px solid transparent;
+}
+
+.site-nav a:hover {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-rule-soft);
+}
+
+.site-nav a[aria-current="page"] {
+  border-bottom-color: var(--color-accent);
+}
+
+.site-nav .nav-contact {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  border-radius: var(--radius);
+  margin-inline-start: var(--space-2);
+}
+
+.site-nav .nav-contact:hover {
+  background: var(--color-accent-strong);
+  color: var(--color-on-accent);
+  border-bottom-color: transparent;
+}
+
+.site-nav .nav-contact[aria-current="page"] {
+  background: var(--color-ink);
+  color: var(--color-on-accent);
+  border-bottom-color: transparent;
+}
+
+.nav-toggle {
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-thin);
+  border-radius: var(--radius);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nav-toggle[aria-expanded="true"] {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Without JavaScript the nav is always visible and wraps. With JavaScript it collapses on narrow screens. */
+@media (width < 56rem) {
+  .has-js .site-nav {
+    display: none;
+    flex-basis: 100%;
+  }
+
+  .has-js .site-header.nav-open .site-nav {
+    display: block;
+  }
+
+  .has-js .site-nav ul {
+    flex-direction: column;
+    gap: 0;
+    border-top: var(--border-soft);
+  }
+
+  .has-js .site-nav li {
+    border-bottom: var(--border-soft);
+  }
+
+  .has-js .site-nav a {
+    width: 100%;
+  }
+
+  .has-js .site-nav .nav-contact {
+    margin: var(--space-3) 0;
+    justify-content: center;
+  }
+}
+
+@media (width >= 56rem) {
+  .nav-toggle {
+    display: none;
+  }
+}
+
+/* ---------- Context overrides (placed last so selector specificity ascends) ---------- */
+
+/* The one evergreen field on the site. Stepped padding keeps text well inset from the colored edge. */
+.section--field {
+  padding: var(--space-8) var(--space-4);
+  background: var(--color-field);
+  color: var(--color-on-field);
+}
+
+@media (width >= 48rem) {
+  .section--field {
+    padding-block: 7rem;
+  }
+}
+
+.section--field :focus-visible {
+  outline-color: var(--color-focus-on-dark);
+}
+
+.section--field :where(a) {
+  color: var(--color-on-field);
+}
+
+.section--field :where(a):hover {
+  color: var(--color-marker);
+}
+
+.opener-aside .policy-list div {
+  grid-template-columns: minmax(7rem, 2fr) minmax(0, 3fr);
+  padding-block: var(--space-3);
+}
+
+.stage-index a:hover {
+  color: var(--color-accent-strong);
+  text-decoration: underline;
+}
+
+.site-footer a:hover {
+  color: var(--color-marker);
+}
+
+/* ---------- Back to top ----------
+   A real link to #top (the body), placed as the last child of main on every page (inside the
+   main landmark, so axe "region" is satisfied; main is also the sticky containing block).
+   Without JS it sits in normal flow at the page end, inside the empty bottom padding of the last
+   section (the negative top margin pulls it up into that padding), so it covers nothing.
+   With JS it becomes sticky: it floats bottom-right once the page has scrolled about one viewport and
+   comes to rest in the same reserved spot above the footer, so it can never sit on the footer.
+   Hidden uses visibility, which removes it from the tab order and accessibility tree without
+   changing layout (no layout shift). */
+.to-top {
+  width: max-content;
+  max-width: calc(100% - 2 * var(--space-4));
+  margin: calc(-1 * (var(--to-top-height) + var(--space-5))) calc(var(--space-4) + env(safe-area-inset-right, 0px)) var(--space-5) auto;
+}
+
+.to-top-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--to-top-height);
+  padding: var(--space-2) var(--space-4);
+  border: 2px solid var(--color-ink);
+  border-radius: var(--radius);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: var(--step-small);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color var(--duration-fast) linear, color var(--duration-fast) linear;
+}
+
+.to-top-link:hover {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.has-js .to-top {
+  position: sticky;
+  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  z-index: 5;
+}
+
+/* Shown and hidden instantly: no fade, so the control is never measured or read at partial contrast. */
+.has-js .to-top:not(.is-shown) {
+  visibility: hidden;
+}
+
+/* Inquiry email fallback: shown only when the message is too long for a mailto link. */
+.mail-fallback {
+  margin-top: var(--space-5);
+  max-width: 36rem;
+}
+
+.mail-fallback label {
+  display: block;
+  margin-top: var(--space-3);
+  font-weight: 700;
+}
+
+.mail-fallback textarea {
+  width: 100%;
+  margin-top: var(--space-2);
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: var(--border-thin);
+  padding: var(--space-3);
+}
